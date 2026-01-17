@@ -1,0 +1,39 @@
+{
+  "_format": "hh3-sol-build-info-1",
+  "id": "solc-0_8_28-918e2df8958d8397f336257679ddeb79089a0701",
+  "solcVersion": "0.8.28",
+  "solcLongVersion": "0.8.28+commit.7893614a",
+  "userSourceNameMap": {
+    "contracts/Auction.sol": "project/contracts/Auction.sol"
+  },
+  "input": {
+    "language": "Solidity",
+    "settings": {
+      "evmVersion": "cancun",
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      },
+      "outputSelection": {
+        "*": {
+          "": [
+            "ast"
+          ],
+          "*": [
+            "abi",
+            "evm.bytecode",
+            "evm.deployedBytecode",
+            "evm.methodIdentifiers",
+            "metadata"
+          ]
+        }
+      },
+      "remappings": []
+    },
+    "sources": {
+      "project/contracts/Auction.sol": {
+        "content": "// SPDX-License-Identifier: MIT\r\npragma solidity ^0.8.20;\r\n\r\ncontract Auction {\r\n    address public owner;\r\n    string public itemName;\r\n    uint256 public endTime;\r\n\r\n    address public highestBidder;\r\n    uint256 public highestBid;\r\n\r\n    bool public ended;\r\n\r\n    mapping(address => uint256) public pendingReturns;\r\n\r\n    event HighestBidIncreased(address bidder, uint256 amount);\r\n    event AuctionEnded(address winner, uint256 amount);\r\n\r\n    constructor(string memory _itemName, uint256 _biddingTime) {\r\n        owner = msg.sender;\r\n        itemName = _itemName;\r\n        endTime = block.timestamp + _biddingTime;\r\n    }\r\n\r\n    modifier onlyBeforeEnd() {\r\n        require(block.timestamp < endTime, \"Auction already ended\");\r\n        _;\r\n    }\r\n\r\n    modifier onlyAfterEnd() {\r\n        require(block.timestamp >= endTime, \"Auction not yet ended\");\r\n        _;\r\n    }\r\n\r\n    function bid() external payable onlyBeforeEnd {\r\n        require(msg.value > highestBid, \"Bid must be higher than current\");\r\n\r\n        if (highestBid != 0) {\r\n            pendingReturns[highestBidder] += highestBid;\r\n        }\r\n\r\n        highestBidder = msg.sender;\r\n        highestBid = msg.value;\r\n\r\n        emit HighestBidIncreased(msg.sender, msg.value);\r\n    }\r\n\r\n    function withdraw() external returns (bool) {\r\n        uint256 amount = pendingReturns[msg.sender];\r\n        require(amount > 0, \"Nothing to withdraw\");\r\n\r\n        pendingReturns[msg.sender] = 0;\r\n        payable(msg.sender).transfer(amount);\r\n\r\n        return true;\r\n    }\r\n\r\n    function endAuction() external onlyAfterEnd {\r\n        require(!ended, \"Auction already ended\");\r\n        require(msg.sender == owner, \"Only owner can end\");\r\n\r\n        ended = true;\r\n        emit AuctionEnded(highestBidder, highestBid);\r\n\r\n        payable(owner).transfer(highestBid);\r\n    }\r\n}\r\n"
+      }
+    }
+  }
+}
