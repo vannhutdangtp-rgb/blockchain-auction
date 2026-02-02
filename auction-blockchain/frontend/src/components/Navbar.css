@@ -1,0 +1,60 @@
+.navbar {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.navbar-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar-brand h1 {
+  font-size: 28px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.account-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f8f9fa;
+  padding: 10px 15px;
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+.account-icon {
+  font-size: 20px;
+}
+
+.account-address {
+  color: #495057;
+  font-size: 14px;
+}
+
+@media (max-width: 768px) {
+  .navbar-brand h1 {
+    font-size: 20px;
+  }
+
+  .account-address {
+    display: none;
+  }
+}
